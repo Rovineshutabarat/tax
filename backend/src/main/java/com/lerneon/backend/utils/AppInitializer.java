@@ -1,13 +1,13 @@
 package com.lerneon.backend.utils;
 
-import com.lerneon.backend.models.entity.Category;
+import com.lerneon.backend.models.entity.BusinessSector;
 import com.lerneon.backend.models.entity.Role;
 import com.lerneon.backend.models.entity.User;
 import com.lerneon.backend.models.enums.AccountProvider;
 import com.lerneon.backend.models.exceptions.ResourceNotFoundException;
+import com.lerneon.backend.repositories.BusinessSectorRepository;
 import com.lerneon.backend.repositories.RoleRepository;
 import com.lerneon.backend.repositories.UserRepository;
-import com.lerneon.backend.services.implementations.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,26 +20,20 @@ import java.util.List;
 @AllArgsConstructor
 public class AppInitializer implements CommandLineRunner {
     private final RoleRepository roleRepository;
-    private final CategoryService categoryService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BusinessSectorRepository businessSectorRepository;
 
     @Override
     public void run(String... args) {
         initializeRoles();
-        initializeCategories();
         initializeUsers();
+        initializeBusinessSectors();
     }
 
     void initializeRoles() {
         roleRepository.save(new Role("ROLE_USER"));
         roleRepository.save(new Role("ROLE_ADMIN"));
-    }
-
-    void initializeCategories() {
-        categoryService.create(Category.builder()
-                .name("Category 1")
-                .build());
     }
 
     void initializeUsers() {
@@ -57,4 +51,32 @@ public class AppInitializer implements CommandLineRunner {
                 .canChangePassword(false)
                 .build());
     }
+
+    void initializeBusinessSectors() {
+        List<BusinessSector> businessSectors = List.of(
+                BusinessSector.builder()
+                        .name("Information Technology")
+                        .description("Software development, IT services, and digital infrastructure.")
+                        .build(),
+                BusinessSector.builder()
+                        .name("Finance")
+                        .description("Banking, insurance, and financial services.")
+                        .build(),
+                BusinessSector.builder()
+                        .name("Manufacturing")
+                        .description("Industrial production and assembly operations.")
+                        .build(),
+                BusinessSector.builder()
+                        .name("Retail")
+                        .description("Wholesale and retail trade industries.")
+                        .build(),
+                BusinessSector.builder()
+                        .name("Healthcare")
+                        .description("Medical services, hospitals, and pharmaceuticals.")
+                        .build()
+        );
+
+        businessSectorRepository.saveAll(businessSectors);
+    }
+
 }

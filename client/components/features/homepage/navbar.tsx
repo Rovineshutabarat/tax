@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Receipt } from "lucide-react";
+import Link from "next/link";
 
 const Navbar = () => {
   return (
@@ -32,7 +33,15 @@ const Navbar = () => {
           >
             Testimoni
           </a>
-          <Button size="sm">Masuk</Button>
+
+          <div className="flex items-center space-x-2">
+            <Link href="/auth/login">
+              <Button size="sm" variant="outline" className="cursor-pointer">Masuk</Button>
+            </Link>
+            <Link href="/auth/register">
+              <Button size="sm" className="cursor-pointer">Daftar</Button>
+            </Link>
+          </div>
         </nav>
         <Button
           className="md:hidden bg-transparent"

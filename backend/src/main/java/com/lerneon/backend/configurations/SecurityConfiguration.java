@@ -35,7 +35,7 @@ public class SecurityConfiguration {
                         .requestMatchers(
                                 "/auth/**",
                                 "/oauth2/**",
-//                                "/category/**",
+                                "/business-sector/**",
                                 "/login/**",
                                 "/jwt/**").permitAll()
                         .anyRequest().authenticated()
