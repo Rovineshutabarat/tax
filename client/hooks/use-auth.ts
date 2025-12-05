@@ -42,6 +42,7 @@ export function useAuth(): UseAuth {
     session,
     setSession,
     isAuthenticated,
+    hasRole,
     hasPermission,
     isRefreshLoading,
   } = ctx;
@@ -157,6 +158,7 @@ export function useAuth(): UseAuth {
   return {
     session: session,
     isAuthenticated: isAuthenticated,
+    hasRole: hasRole,
     hasPermission: hasPermission,
     isLoading: isLoading,
     isRefreshLoading: isRefreshLoading,

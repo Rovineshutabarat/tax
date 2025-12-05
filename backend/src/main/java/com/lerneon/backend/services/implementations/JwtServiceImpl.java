@@ -1,5 +1,6 @@
 package com.lerneon.backend.services.implementations;
 
+import com.lerneon.backend.models.entity.Permission;
 import com.lerneon.backend.models.entity.Role;
 import com.lerneon.backend.models.entity.User;
 import com.lerneon.backend.models.properties.JwtProperties;
@@ -62,8 +63,15 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public Map<String, Object> setClaims(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", user.getRoles().stream().map(Role::getName).toList());
         claims.put("email", user.getEmail());
+        claims.put("roles", user.getRoles().stream().map(Role::getName).toList());
+        claims.put("permissions",
+                user.getRoles().stream()
+                        .flatMap(role -> role.getPermissions().stream())
+                        .map(Permission::getName)
+                        .distinct()
+                        .toList()
+        );
 
         return claims;
     }
@@ -76,5 +84,10 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public List<String> extractRoles(String token) {
         return Collections.singletonList(extractAllClaims(token).get("roles", String.class));
+    }
+
+    @Override
+    public List<String> extractPermission(String token) {
+        return Collections.singletonList(extractAllClaims(token).get("permissions", String.class));
     }
 }

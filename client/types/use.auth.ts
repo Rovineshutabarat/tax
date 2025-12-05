@@ -8,7 +8,8 @@ import { UpdatePasswordRequest } from "@/types/payload/request/update.password.r
 export type UseAuth = {
   session: AuthResponse | null;
   isAuthenticated: boolean;
-  hasPermission: (roles: string[]) => boolean;
+  hasPermission: (permissions: string[]) => boolean;
+  hasRole: (roles: string[]) => boolean;
   isLoading: boolean;
   isRefreshLoading: boolean;
   signIn: (data: LoginRequest) => void;

@@ -5,6 +5,7 @@ import com.lerneon.backend.models.exceptions.ResourceNotFoundException;
 import com.lerneon.backend.repositories.BusinessSectorRepository;
 import com.lerneon.backend.services.BusinessSectorService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,11 +27,13 @@ public class BusinessSectorServiceImpl implements BusinessSectorService {
         );
     }
 
+    @PreAuthorize("hasAuthority('BUSINESS_SECTOR_CREATE')")
     @Override
     public BusinessSector createBusinessSector(BusinessSector businessSector) {
         return businessSectorRepository.save(businessSector);
     }
 
+    @PreAuthorize("hasAuthority('BUSINESS_SECTOR_UPDATE')")
     @Override
     public BusinessSector updateBusinessSector(Integer id, BusinessSector businessSector) {
         findBusinessSectorById(id);
@@ -38,6 +41,7 @@ public class BusinessSectorServiceImpl implements BusinessSectorService {
         return businessSectorRepository.save(businessSector);
     }
 
+    @PreAuthorize("hasAuthority('BUSINESS_SECTOR_DELETE')")
     @Override
     public BusinessSector deleteBusinessSector(Integer id) {
         BusinessSector businessSector = findBusinessSectorById(id);

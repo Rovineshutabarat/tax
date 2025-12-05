@@ -3,6 +3,19 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #666 transparent;
+}
 
 @theme inline {
   --color-background: var(--background);

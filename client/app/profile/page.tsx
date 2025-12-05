@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
-import AuthGuard from "@/components/ui/auth-guard";
+import AuthGuard from "@/components/shared/auth-guard";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { UpdateProfileRequest } from "@/types/payload/request/update.profile.request";
 import { zodResolver } from "@hookform/resolvers/zod";

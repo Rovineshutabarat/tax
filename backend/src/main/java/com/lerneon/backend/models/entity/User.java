@@ -14,9 +14,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @SuperBuilder
@@ -54,7 +54,22 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        getRoles().forEach(
+                role -> {
+                    authorities.add(
+                            new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase())
+                    );
+                    role.getPermissions().forEach(
+                            permission -> {
+                                authorities.add(new SimpleGrantedAuthority(permission.getName()));
+                            }
+                    );
+                }
+        );
+
+        return authorities;
     }
 
     @Override
