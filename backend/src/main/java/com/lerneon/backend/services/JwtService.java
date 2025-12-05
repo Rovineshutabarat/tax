@@ -21,4 +21,6 @@ public interface JwtService {
     String extractEmail(String token);
 
     List<String> extractRoles(String token);
+
+    List<String> extractPermission(String token);
 }

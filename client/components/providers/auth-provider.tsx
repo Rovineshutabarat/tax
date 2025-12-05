@@ -5,12 +5,14 @@ import { setAccessToken } from "@/services/config/api.client";
 import { refreshAccessToken } from "@/services/config/refresh.client";
 import { Role } from "@/types/entity/role";
 import { usePathname } from "next/navigation";
+import { Permission } from "@/types/entity/permission";
 
 type AuthProviderContextState = {
   session: AuthResponse | null;
   setSession: (session: AuthResponse | null) => void;
   isAuthenticated: boolean;
-  hasPermission: (roles: string[]) => boolean;
+  hasPermission: (permissions: string[]) => boolean;
+  hasRole: (roles: string[]) => boolean;
   isRefreshLoading: boolean;
 };
 
@@ -49,15 +51,30 @@ export default function AuthProvider({
     })();
   }, [pathname, setSession]);
 
-  const hasPermission = React.useCallback(
-    (permissions: string[]): boolean => {
-      if (!session?.user?.roles || permissions.length === 0) {
+  const hasRole = React.useCallback(
+    (roles: string[]): boolean => {
+      if (!session?.user?.roles || roles.length === 0) {
         return false;
       }
 
       return session.user.roles.some((role: Role): boolean => {
-        return permissions.includes(role.name);
+        return roles.includes(role.name);
       });
+    },
+    [session],
+  );
+
+  const hasPermission = React.useCallback(
+    (permissions: string[]): boolean => {
+      if (!session?.user || permissions.length === 0) {
+        return false;
+      }
+
+      return session.user.roles.some((role: Role) =>
+        role.permissions.some((permission: Permission) =>
+          permissions.includes(permission.name),
+        ),
+      );
     },
     [session],
   );
@@ -73,6 +90,7 @@ export default function AuthProvider({
         session,
         setSession,
         isAuthenticated: isAuthenticated,
+        hasRole,
         hasPermission,
         isRefreshLoading,
       }}
