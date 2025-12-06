@@ -1,10 +1,9 @@
 package com.lerneon.backend.handlers;
 
 import com.lerneon.backend.models.enums.ResponseStatus;
-import com.lerneon.backend.models.payload.response.common.ErrorResponse;
-import com.lerneon.backend.models.payload.response.common.SuccessResponse;
-import com.lerneon.backend.models.payload.response.common.ValidationErrorResponse;
+import com.lerneon.backend.models.payload.response.common.*;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -24,6 +23,23 @@ public class ResponseHandler {
                 .code(httpStatus.value())
                 .message(message)
                 .data(data)
+                .build(), httpStatus);
+    }
+
+    public static <T> ResponseEntity<PageResponse<T>> buildPaginationResponse(HttpStatus httpStatus, String message, Page<T> page) {
+        return new ResponseEntity<>(PageResponse.<T>builder()
+                .status(ResponseStatus.SUCCESS)
+                .code(httpStatus.value())
+                .message(message)
+                .data(page.getContent())
+                .pagination(PaginationResponse.builder()
+                        .page(page.getPageable().getPageNumber())
+                        .size(page.getPageable().getPageSize())
+                        .totalElements(page.getTotalElements())
+                        .totalPages(page.getTotalPages())
+                        .hasNext(page.hasNext())
+                        .hasPrevious(page.hasPrevious())
+                        .build())
                 .build(), httpStatus);
     }
 

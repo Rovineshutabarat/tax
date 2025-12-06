@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -26,12 +26,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucideArrowRight } from "lucide-react";
 import { DepartmentRequest } from "@/types/payload/request/department.request";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DepartmentService } from "@/services/department.service";
 import { toast } from "sonner";
+import { useParams } from "next/navigation";
 
-const CreateDepartmentPage = () => {
+const UpdateDepartmentPage = () => {
   const queryClient = useQueryClient();
+  const params = useParams();
+
+  const { data: department } = useQuery({
+    queryKey: [`department_${params.id}`],
+    queryFn: () => DepartmentService.findDepartmentById(Number(params.id)),
+  });
 
   const form = useForm<DepartmentRequest>({
     resolver: zodResolver(DepartmentRequest),
@@ -42,12 +49,12 @@ const CreateDepartmentPage = () => {
     },
   });
 
-  const createDepartmentMutation = useMutation({
-    mutationKey: ["create_department"],
+  const updateDepartmentMutation = useMutation({
+    mutationKey: [`update_department_${params.id}`],
     mutationFn: (data: DepartmentRequest) =>
-      DepartmentService.createDepartment(data),
-    onSuccess: () => toast.success("Success creating department"),
-    onError: () => toast.error("Failed to create department"),
+      DepartmentService.updateDepartment(Number(params.id), data),
+    onSuccess: () => toast.success("Success updating department"),
+    onError: () => toast.error("Failed to update department"),
     onSettled: async () => {
       return await queryClient.invalidateQueries({ queryKey: ["departments"] });
     },
@@ -56,8 +63,16 @@ const CreateDepartmentPage = () => {
   const onSubmit: SubmitHandler<DepartmentRequest> = (
     data: DepartmentRequest,
   ) => {
-    createDepartmentMutation.mutate(data);
+    updateDepartmentMutation.mutate(data);
   };
+  useEffect(() => {
+    if (department?.data) {
+      form.reset({
+        name: department.data.name,
+        description: department.data.description,
+      });
+    }
+  }, [department, form]);
 
   return (
     <div className="space-y-6 mt-5">
@@ -111,7 +126,7 @@ const CreateDepartmentPage = () => {
             </CardContent>
             <CardFooter className="flex items-center justify-end">
               <Button type="submit" className="cursor-pointer">
-                Create Department
+                Update Department
                 <LucideArrowRight />
               </Button>
             </CardFooter>
@@ -122,4 +137,4 @@ const CreateDepartmentPage = () => {
   );
 };
 
-export default CreateDepartmentPage;
+export default UpdateDepartmentPage;

@@ -7,7 +7,7 @@ import AppSidebar from "@/components/shared/app-sidebar";
 
 const CompanySidebar = () => {
   const sidebarContent: Sidebar = {
-    label: "Company Dashboard",
+    label: "Company Internal",
     icon: SchoolIcon,
     groups: [
       {
@@ -16,7 +16,7 @@ const CompanySidebar = () => {
           {
             label: "Department",
             icon: Home,
-            path: "department",
+            path: "/company/department/list",
           },
         ],
       },

@@ -6,24 +6,25 @@ import com.lerneon.backend.models.exceptions.DuplicateElementException;
 import com.lerneon.backend.models.exceptions.ResourceNotFoundException;
 import com.lerneon.backend.models.payload.request.DepartmentRequest;
 import com.lerneon.backend.repositories.DepartmentRepository;
-import com.lerneon.backend.services.CompanyService;
 import com.lerneon.backend.services.DepartmentService;
+import com.lerneon.backend.services.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentRepository departmentRepository;
-    private final CompanyService companyService;
+    private final UserService userService;
 
     @PreAuthorize("hasAuthority('DEPARTMENT_VIEW')")
     @Override
-    public List<Department> findAllDepartments() {
-        return departmentRepository.findAll();
+    public Page<Department> findAllDepartments(Pageable pageable) {
+        Company company = userService.getCurrentUserCompany();
+        return departmentRepository.findAllByCompany(company, pageable);
     }
 
     @PreAuthorize("hasAuthority('DEPARTMENT_VIEW')")
@@ -41,7 +42,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             throw new DuplicateElementException("Department already exists");
         }
 
-        Company company = companyService.findCompanyById(departmentRequest.getCompanyId());
+        Company company = userService.getCurrentUserCompany();
 
         return departmentRepository.save(Department.builder()
                 .name(departmentRequest.getName())
@@ -53,7 +54,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @PreAuthorize("hasAuthority('DEPARTMENT_UPDATE')")
     @Override
     public Department updateDepartment(Integer id, DepartmentRequest departmentRequest) {
-        Company company = companyService.findCompanyById(departmentRequest.getCompanyId());
+        Company company = userService.getCurrentUserCompany();
 
         return departmentRepository.save(Department.builder()
                 .id(id)

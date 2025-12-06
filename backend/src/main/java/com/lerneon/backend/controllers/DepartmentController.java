@@ -2,13 +2,14 @@ package com.lerneon.backend.controllers;
 
 import com.lerneon.backend.models.entity.Department;
 import com.lerneon.backend.models.payload.request.DepartmentRequest;
+import com.lerneon.backend.models.payload.response.common.PageResponse;
 import com.lerneon.backend.models.payload.response.common.SuccessResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-
 public interface DepartmentController {
-    ResponseEntity<SuccessResponse<List<Department>>> findAllDepartments();
+    ResponseEntity<PageResponse<Department>> findAllDepartments(Pageable pageable);
 
     ResponseEntity<SuccessResponse<Department>> findDepartmentById(Integer id);
 

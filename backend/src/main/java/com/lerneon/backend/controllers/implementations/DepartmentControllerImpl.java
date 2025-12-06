@@ -4,15 +4,16 @@ import com.lerneon.backend.controllers.DepartmentController;
 import com.lerneon.backend.handlers.ResponseHandler;
 import com.lerneon.backend.models.entity.Department;
 import com.lerneon.backend.models.payload.request.DepartmentRequest;
+import com.lerneon.backend.models.payload.response.common.PageResponse;
 import com.lerneon.backend.models.payload.response.common.SuccessResponse;
 import com.lerneon.backend.services.DepartmentService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/department")
@@ -22,11 +23,11 @@ public class DepartmentControllerImpl implements DepartmentController {
 
     @GetMapping
     @Override
-    public ResponseEntity<SuccessResponse<List<Department>>> findAllDepartments() {
-        return ResponseHandler.buildSuccessResponse(
+    public ResponseEntity<PageResponse<Department>> findAllDepartments(@PageableDefault Pageable pageable) {
+        return ResponseHandler.buildPaginationResponse(
                 HttpStatus.OK,
                 "Successfully retrieved all departments",
-                departmentService.findAllDepartments()
+                departmentService.findAllDepartments(pageable)
         );
     }
 

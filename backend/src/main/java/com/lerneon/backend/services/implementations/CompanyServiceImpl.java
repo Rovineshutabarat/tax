@@ -3,8 +3,11 @@ package com.lerneon.backend.services.implementations;
 import com.lerneon.backend.models.entity.BusinessSector;
 import com.lerneon.backend.models.entity.Company;
 import com.lerneon.backend.models.entity.CompanyPayrollSetting;
+import com.lerneon.backend.models.entity.User;
 import com.lerneon.backend.models.enums.CompanyType;
 import com.lerneon.backend.models.enums.GrossNetOption;
+import com.lerneon.backend.models.enums.RoleEnum;
+import com.lerneon.backend.models.exceptions.AuthException;
 import com.lerneon.backend.models.exceptions.DuplicateElementException;
 import com.lerneon.backend.models.exceptions.ResourceNotFoundException;
 import com.lerneon.backend.models.payload.request.CompanyRequest;
@@ -12,7 +15,11 @@ import com.lerneon.backend.repositories.BusinessSectorRepository;
 import com.lerneon.backend.repositories.CompanyPayrollSettingRepository;
 import com.lerneon.backend.repositories.CompanyRepository;
 import com.lerneon.backend.services.CompanyService;
+import com.lerneon.backend.services.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +30,7 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final BusinessSectorRepository businessSectorRepository;
     private final CompanyPayrollSettingRepository companyPayrollSettingRepository;
+    private final UserService userService;
 
     @Override
     public List<Company> findAllCompanies() {
@@ -36,8 +44,15 @@ public class CompanyServiceImpl implements CompanyService {
         );
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Override
     public Company createCompany(CompanyRequest companyRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(authentication.getPrincipal() instanceof User user)) {
+            throw new AuthException("Unauthorized");
+        }
+
         BusinessSector businessSector = businessSectorRepository.findById(companyRequest.getBusinessSectorId()).orElseThrow(
                 () -> new ResourceNotFoundException("Business sector was not found.")
         );
@@ -55,7 +70,7 @@ public class CompanyServiceImpl implements CompanyService {
                 .grossNetOption(GrossNetOption.valueOf(companyRequest.getGrossNetOption()))
                 .build());
 
-        return companyRepository.save(Company.builder()
+        Company company = companyRepository.save(Company.builder()
                 .name(companyRequest.getName())
                 .companyPayrollSetting(companyPayrollSetting)
                 .taxId(companyRequest.getTaxId())
@@ -69,6 +84,10 @@ public class CompanyServiceImpl implements CompanyService {
                 .businessSector(businessSector)
                 .establishedAt(companyRequest.getEstablishedAt())
                 .build());
+
+        userService.assignUserCompany(company, user, RoleEnum.ROLE_ADMIN);
+
+        return company;
     }
 
     @Override

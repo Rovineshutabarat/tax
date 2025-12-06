@@ -1,7 +1,6 @@
 package com.lerneon.backend.models.payload.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +17,4 @@ public class DepartmentRequest {
     private String name;
 
     private String description;
-
-    @NotNull(message = "Company ID is required")
-    private Integer companyId;
 }
