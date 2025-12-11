@@ -38,6 +38,9 @@ public class SecurityConfiguration {
                                 "/auth/**",
                                 "/oauth2/**",
                                 "/business-sector/**",
+                                "/invitation/accept",
+                                "/user/set-password",
+                                "/role",
                                 "/login/**",
                                 "/jwt/**").permitAll()
                         .anyRequest().authenticated()

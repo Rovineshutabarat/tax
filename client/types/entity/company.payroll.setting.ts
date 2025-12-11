@@ -1,6 +1,5 @@
-import { GrossNetOption } from "@/types/enums/gross.net.option";
-
 export type CompanyPayrollSetting = {
+  taxId: string;
   isVatRegistered: boolean;
-  grossNetOption: GrossNetOption;
+  businessActivityCode: string;
 };

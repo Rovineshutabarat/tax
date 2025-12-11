@@ -9,4 +9,7 @@ public enum PermissionEnum {
     DEPARTMENT_CREATE,
     DEPARTMENT_UPDATE,
     DEPARTMENT_DELETE,
+
+    EMPLOYEE_VIEW,
+    EMPLOYEE_CREATE,
 }

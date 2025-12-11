@@ -5,7 +5,6 @@ import com.lerneon.backend.models.entity.Company;
 import com.lerneon.backend.models.entity.CompanyPayrollSetting;
 import com.lerneon.backend.models.entity.User;
 import com.lerneon.backend.models.enums.CompanyType;
-import com.lerneon.backend.models.enums.GrossNetOption;
 import com.lerneon.backend.models.enums.RoleEnum;
 import com.lerneon.backend.models.exceptions.AuthException;
 import com.lerneon.backend.models.exceptions.DuplicateElementException;
@@ -57,7 +56,7 @@ public class CompanyServiceImpl implements CompanyService {
                 () -> new ResourceNotFoundException("Business sector was not found.")
         );
 
-        if (companyRepository.existsByTaxId(companyRequest.getTaxId())) {
+        if (companyRepository.existsByCompanyPayrollSetting_TaxId(companyRequest.getTaxId())) {
             throw new DuplicateElementException("Tax ID is already used by another company.");
         }
 
@@ -66,23 +65,20 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         CompanyPayrollSetting companyPayrollSetting = companyPayrollSettingRepository.save(CompanyPayrollSetting.builder()
+                .taxId(companyRequest.getTaxId())
                 .isVatRegistered(companyRequest.getIsVatRegistered())
-                .grossNetOption(GrossNetOption.valueOf(companyRequest.getGrossNetOption()))
+                .businessActivityCode(companyRequest.getBusinessActivityCode())
                 .build());
 
         Company company = companyRepository.save(Company.builder()
                 .name(companyRequest.getName())
-                .companyPayrollSetting(companyPayrollSetting)
-                .taxId(companyRequest.getTaxId())
-                .businessRegistrationNumber(companyRequest.getBusinessRegistrationNumber())
-                .tradeLicenseNumber(companyRequest.getTradeLicenseNumber())
                 .email(companyRequest.getEmail())
                 .phoneNumber(companyRequest.getPhoneNumber())
-                .address(companyRequest.getAddress())
-                .taxOfficeAddress(companyRequest.getTaxOfficeAddress())
-                .companyType(CompanyType.valueOf(companyRequest.getCompanyType()))
-                .businessSector(businessSector)
                 .establishedAt(companyRequest.getEstablishedAt())
+                .businessSector(businessSector)
+                .companyType(CompanyType.valueOf(companyRequest.getCompanyType()))
+                .address(companyRequest.getAddress())
+                .companyPayrollSetting(companyPayrollSetting)
                 .build());
 
         userService.assignUserCompany(company, user, RoleEnum.ROLE_ADMIN);
@@ -90,21 +86,32 @@ public class CompanyServiceImpl implements CompanyService {
         return company;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Override
     public Company updateCompany(Integer id, CompanyRequest companyRequest) {
-        findCompanyById(id);
         BusinessSector businessSector = businessSectorRepository.findById(companyRequest.getBusinessSectorId()).orElseThrow(
                 () -> new ResourceNotFoundException("Business sector was not found.")
         );
 
-        return companyRepository.save(Company.builder()
-                .id(id)
-                .name(companyRequest.getName())
+        if (companyRepository.existsByCompanyPayrollSetting_TaxId(companyRequest.getTaxId())) {
+            throw new DuplicateElementException("Tax ID is already used by another company.");
+        }
+
+        CompanyPayrollSetting companyPayrollSetting = companyPayrollSettingRepository.save(CompanyPayrollSetting.builder()
                 .taxId(companyRequest.getTaxId())
+                .isVatRegistered(companyRequest.getIsVatRegistered())
+                .businessActivityCode(companyRequest.getBusinessActivityCode())
+                .build());
+
+        return companyRepository.save(Company.builder()
+                .name(companyRequest.getName())
                 .email(companyRequest.getEmail())
                 .phoneNumber(companyRequest.getPhoneNumber())
-                .address(companyRequest.getAddress())
+                .establishedAt(companyRequest.getEstablishedAt())
                 .businessSector(businessSector)
+                .companyType(CompanyType.valueOf(companyRequest.getCompanyType()))
+                .address(companyRequest.getAddress())
+                .companyPayrollSetting(companyPayrollSetting)
                 .build());
     }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Fragment } from "react";
-import { Home, SchoolIcon } from "lucide-react";
+import { Home, SchoolIcon, User } from "lucide-react";
 import { Sidebar } from "@/types/sidebar";
 import AppSidebar from "@/components/shared/app-sidebar";
 
@@ -16,7 +16,30 @@ const CompanySidebar = () => {
           {
             label: "Department",
             icon: Home,
-            path: "/company/department/list",
+            subItems: [
+              {
+                label: "Department List",
+                path: "/company/department/list",
+              },
+              {
+                label: "Department Create",
+                path: "/company/department/create",
+              },
+            ],
+          },
+          {
+            label: "Employee",
+            icon: User,
+            subItems: [
+              {
+                label: "Employee List",
+                path: "/company/employee/list",
+              },
+              {
+                label: "Invite Employee",
+                path: "/company/employee/invite",
+              },
+            ],
           },
         ],
       },

@@ -2,6 +2,7 @@ package com.lerneon.backend.handlers;
 
 import com.lerneon.backend.models.exceptions.AuthException;
 import com.lerneon.backend.models.exceptions.DuplicateElementException;
+import com.lerneon.backend.models.exceptions.InvitationException;
 import com.lerneon.backend.models.exceptions.ResourceNotFoundException;
 import com.lerneon.backend.models.payload.response.common.ErrorResponse;
 import com.lerneon.backend.models.payload.response.common.ValidationErrorResponse;
@@ -48,5 +49,12 @@ public class GlobalExceptionHandler {
             AuthException exception,
             HttpServletRequest request) {
         return ResponseHandler.buildErrorResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request);
+    }
+
+    @ExceptionHandler(InvitationException.class)
+    public ResponseEntity<ErrorResponse> handleInvitationException(
+            InvitationException exception,
+            HttpServletRequest request) {
+        return ResponseHandler.buildErrorResponse(HttpStatus.BAD_REQUEST, exception.getMessage(), request);
     }
 }

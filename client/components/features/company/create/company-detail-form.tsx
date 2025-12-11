@@ -1,6 +1,5 @@
 import React from "react";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import {
@@ -18,11 +17,11 @@ import { BusinessSectorService } from "@/services/business.sector.service";
 import { BusinessSector } from "@/types/entity/business.sector";
 import { useCompanyFormStore } from "@/store/use-company-form-store";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { CompanyLegalRegistrationRequest } from "@/types/payload/request/company.legal.registration.request";
+import { CompanyDetailRequest } from "@/types/payload/request/company.detail.request";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CompanyType } from "@/types/enums/company.type";
 
-const CompanyLegalRegistrationForm = () => {
+const CompanyDetailForm = () => {
   const companyTypes: { id: number; value: CompanyType; label: string }[] = [
     { id: 1, value: CompanyType.Values.PT, label: "PT" },
     { id: 2, value: CompanyType.Values.CV, label: "CV" },
@@ -36,15 +35,12 @@ const CompanyLegalRegistrationForm = () => {
     React.useState<CompanyType>(formData?.companyType ?? CompanyType.Values.CV);
 
   const {
-    register,
     setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm<CompanyLegalRegistrationRequest>({
-    resolver: zodResolver(CompanyLegalRegistrationRequest),
+  } = useForm<CompanyDetailRequest>({
+    resolver: zodResolver(CompanyDetailRequest),
     defaultValues: {
-      businessRegistrationNumber: formData?.businessRegistrationNumber,
-      tradeLicenseNumber: formData?.tradeLicenseNumber,
       businessSectorId: formData?.businessSectorId,
       companyType: formData?.companyType ?? CompanyType.Values.PT,
     },
@@ -55,8 +51,8 @@ const CompanyLegalRegistrationForm = () => {
     queryFn: () => BusinessSectorService.findAllBusinessSectors(),
   });
 
-  const onSubmit: SubmitHandler<CompanyLegalRegistrationRequest> = (
-    data: CompanyLegalRegistrationRequest,
+  const onSubmit: SubmitHandler<CompanyDetailRequest> = (
+    data: CompanyDetailRequest,
   ) => {
     setFormData(data);
     saveStoredStep(3);
@@ -80,42 +76,6 @@ const CompanyLegalRegistrationForm = () => {
       </div>
 
       <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
-        <div className="space-y-2">
-          <Label>Business Registration Number</Label>
-          <Label className="text-xs text-muted-foreground">
-            Enter the official registration number assigned to your company by
-            the government.
-          </Label>
-          <Input
-            type="number"
-            placeholder="Enter your company business registration number"
-            {...register("businessRegistrationNumber")}
-          />
-          {errors.businessRegistrationNumber && (
-            <p className="text-destructive text-xs">
-              *{errors.businessRegistrationNumber.message}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label>Trade License Number</Label>
-          <Label className="text-xs text-muted-foreground">
-            Provide your company’s trade license number for legal and
-            operational purposes.
-          </Label>
-          <Input
-            type="number"
-            placeholder="Enter your company trade license number"
-            {...register("tradeLicenseNumber")}
-          />
-          {errors.tradeLicenseNumber && (
-            <p className="text-destructive text-xs">
-              *{errors.tradeLicenseNumber.message}
-            </p>
-          )}
-        </div>
-
         <div className="space-y-2 w-full">
           <Label>Business Sector</Label>
           <Label className="text-xs text-muted-foreground">
@@ -220,4 +180,4 @@ const CompanyLegalRegistrationForm = () => {
   );
 };
 
-export default CompanyLegalRegistrationForm;
+export default CompanyDetailForm;

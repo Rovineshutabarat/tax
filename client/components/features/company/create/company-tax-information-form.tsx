@@ -9,25 +9,20 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { CompanyTaxInfoRequest } from "@/types/payload/request/company.tax.info.request";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCompanyFormStore } from "@/store/use-company-form-store";
-import { GrossNetOption } from "@/types/enums/gross.net.option";
 import { useMutation } from "@tanstack/react-query";
 import { CompanyRequest } from "@/types/payload/request/company.request";
 import { CompanyService } from "@/services/company.service";
 import { toast } from "sonner";
 import { ErrorResponse } from "@/types/payload/response/common/error.response";
+import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 
 const CompanyTaxInformationForm = () => {
   const [isVatRegistered, setIsVatRegistered] = React.useState<boolean>(false);
-  const [selectedGrossOption, setSelectedGrossOption] =
-    React.useState<string>("GROSS");
-
-  const grossNetOptions = [
-    { name: "Gross", value: "GROSS" },
-    { name: "Gross Up", value: "GROSS_UP" },
-    { name: "Net", value: "NET" },
-  ];
+  const router = useRouter()
 
   const {
+    register,
     handleSubmit,
     setValue,
     formState: { errors },
@@ -35,7 +30,7 @@ const CompanyTaxInformationForm = () => {
     resolver: zodResolver(CompanyTaxInfoRequest),
   });
 
-  const { formData, setFormData, setCurrentStep } = useCompanyFormStore();
+  const { formData, discardChanges, setCurrentStep } = useCompanyFormStore();
 
   const createCompanyMutation = useMutation({
     mutationKey: ["create-company"],
@@ -52,19 +47,19 @@ const CompanyTaxInformationForm = () => {
   const onSubmit: SubmitHandler<CompanyTaxInfoRequest> = (
     data: CompanyTaxInfoRequest,
   ) => {
-    setFormData(data);
-    console.log(formData);
-    createCompanyMutation.mutate(formData as CompanyRequest);
+    const finalData = {
+      ...formData,
+      ...data,
+    };
+    createCompanyMutation.mutate(finalData as CompanyRequest);
+    discardChanges();
+    router.push("/company/department/list")
   };
 
   React.useEffect(() => {
     if (formData) {
       setIsVatRegistered(formData.isVatRegistered ?? false);
       setValue("isVatRegistered", formData.isVatRegistered ?? false);
-
-      const gross = formData.grossNetOption ?? "GROSS";
-      setSelectedGrossOption(gross);
-      setValue("grossNetOption", gross as GrossNetOption);
     }
   }, [formData, setValue]);
 
@@ -82,6 +77,28 @@ const CompanyTaxInformationForm = () => {
       </div>
 
       <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
+        <div className="space-y-4">
+          <div className="space-y-1">
+            <Label>Company NPWP</Label>
+            <Label className="text-xs text-muted-foreground">
+              Provide your company’s tax identification number (NPWP) for tax
+              reporting purposes.
+            </Label>
+          </div>
+          <div className="space-y-1">
+            <Input
+              type="number"
+              placeholder="Enter your company NPWP"
+              {...register("taxId")}
+            />
+            {errors.taxId && (
+              <p className="text-destructive text-xs">
+                *{errors.taxId.message}
+              </p>
+            )}
+          </div>
+        </div>
+
         <div className="space-y-4">
           <div className="space-y-1">
             <Label>VAT Registration</Label>
@@ -152,49 +169,26 @@ const CompanyTaxInformationForm = () => {
 
         <div className="space-y-4">
           <div className="space-y-1">
-            <Label>Company Gross Net Option</Label>
+            <Label>Company Business Activity Code</Label>
             <Label className="text-xs text-muted-foreground">
-              Choose how your company reports revenue for tax purposes.
+              Provide your company’s Business Activity Code for tax reporting
+              purposes.
             </Label>
           </div>
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 w-full">
-            {grossNetOptions.map((option, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => {
-                  setSelectedGrossOption(option.value);
-                  setValue("grossNetOption", option.value as GrossNetOption);
-                }}
-                className={cn(
-                  "font-inter rounded-lg border p-4 text-left text-sm font-medium transition-all duration-200 hover:shadow-sm cursor-pointer",
-                  selectedGrossOption === option.value
-                    ? "border-gray-700 "
-                    : "border-onboarding-option-border text-muted-foreground hover:border-onboarding-option-border/60",
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={cn(
-                      "h-2 w-2 rounded-full",
-                      selectedGrossOption === option.value
-                        ? "bg-green-400"
-                        : "bg-onboarding-option-border",
-                    )}
-                  ></div>
-                  {option.name}
-                </div>
-              </button>
-            ))}
+          <div className="space-y-1">
+            <Input
+              type="number"
+              placeholder="Enter your company business activity code"
+              {...register("businessActivityCode")}
+            />
+            {errors.businessActivityCode && (
+              <p className="text-destructive text-xs">
+                *{errors.businessActivityCode.message}
+              </p>
+            )}
           </div>
-          {errors?.grossNetOption && (
-            <p className="text-xs text-destructive">
-              *{errors.grossNetOption.message}
-            </p>
-          )}
         </div>
 
-        {/* Navigation Buttons */}
         <div className="flex justify-between items-center mt-8">
           <Button
             variant="outline"

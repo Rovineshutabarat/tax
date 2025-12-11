@@ -5,14 +5,11 @@ import { CompanyPayrollSetting } from "@/types/entity/company.payroll.setting";
 
 export type Company = {
   name: string;
-  companyPayrollSetting: CompanyPayrollSetting;
-  taxId: string;
-  businessRegistrationNumber: string;
-  tradeLicenseNumber: string;
   email: string;
   phoneNumber: string;
-  address: Address;
-  companyType: CompanyType;
-  businessSector: BusinessSector;
   establishedAt: string;
+  businessSector: BusinessSector;
+  companyType: CompanyType;
+  address: Address;
+  companyPayrollSetting: CompanyPayrollSetting;
 };

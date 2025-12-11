@@ -54,6 +54,10 @@ public class AuthServiceImpl implements AuthService {
                 throw new AuthException("You’ve previously signed up using Google. Please continue with Google to log in.");
             }
 
+            if (!user.getIsVerified() && user.getProvider().equals(AccountProvider.INVITATION)) {
+                throw new AuthException("Your account has been created via invitation. Please set your password to complete the registration.");
+            }
+
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
             );
