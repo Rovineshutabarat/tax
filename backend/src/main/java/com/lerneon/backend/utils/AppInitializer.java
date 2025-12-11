@@ -1,9 +1,6 @@
 package com.lerneon.backend.utils;
 
-import com.lerneon.backend.models.entity.BusinessSector;
-import com.lerneon.backend.models.entity.Permission;
-import com.lerneon.backend.models.entity.Role;
-import com.lerneon.backend.models.entity.User;
+import com.lerneon.backend.models.entity.*;
 import com.lerneon.backend.models.enums.AccountProvider;
 import com.lerneon.backend.models.enums.PermissionEnum;
 import com.lerneon.backend.models.enums.RoleEnum;
@@ -17,6 +14,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -68,14 +66,20 @@ public class AppInitializer implements CommandLineRunner {
                         PermissionEnum.DEPARTMENT_VIEW,
                         PermissionEnum.DEPARTMENT_CREATE,
                         PermissionEnum.DEPARTMENT_UPDATE,
-                        PermissionEnum.DEPARTMENT_DELETE
+                        PermissionEnum.DEPARTMENT_DELETE,
+
+                        PermissionEnum.EMPLOYEE_VIEW,
+                        PermissionEnum.EMPLOYEE_CREATE
                 ),
 
                 "ROLE_MANAGER", Set.of(
                         PermissionEnum.DEPARTMENT_VIEW,
                         PermissionEnum.DEPARTMENT_CREATE,
                         PermissionEnum.DEPARTMENT_UPDATE,
-                        PermissionEnum.DEPARTMENT_DELETE
+                        PermissionEnum.DEPARTMENT_DELETE,
+
+                        PermissionEnum.EMPLOYEE_VIEW,
+                        PermissionEnum.EMPLOYEE_CREATE
                 ),
 
                 "ROLE_STAFF", Set.of(
@@ -143,5 +147,4 @@ public class AppInitializer implements CommandLineRunner {
 
         businessSectorRepository.saveAll(businessSectors);
     }
-
 }

@@ -26,10 +26,6 @@ const CompanyAddressForm = () => {
         street: formData?.address?.street,
         postalCode: formData?.address?.postalCode,
       },
-      taxOfficeAddress: {
-        street: formData?.taxOfficeAddress?.street,
-        postalCode: formData?.taxOfficeAddress?.postalCode,
-      },
     },
   });
 
@@ -61,16 +57,6 @@ const CompanyAddressForm = () => {
             register={register}
             setValue={setValue}
             errors={errors.address}
-          />
-        </div>
-
-        <div className="space-y-4">
-          <Label className="text-[20px]">Tax Office Address</Label>
-          <AddressForm
-            fieldName="taxOfficeAddress"
-            register={register}
-            setValue={setValue}
-            errors={errors.taxOfficeAddress}
           />
         </div>
 

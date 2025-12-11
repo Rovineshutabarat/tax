@@ -1,16 +1,28 @@
 package com.lerneon.backend.services.implementations;
 
+import com.lerneon.backend.models.entity.Company;
+import com.lerneon.backend.models.entity.Invitation;
+import com.lerneon.backend.models.entity.Role;
 import com.lerneon.backend.models.entity.User;
+import com.lerneon.backend.models.enums.AccountProvider;
+import com.lerneon.backend.models.enums.RoleEnum;
 import com.lerneon.backend.models.exceptions.AuthException;
+import com.lerneon.backend.models.exceptions.InvitationException;
 import com.lerneon.backend.models.exceptions.ResourceNotFoundException;
+import com.lerneon.backend.models.payload.request.SetPasswordRequest;
 import com.lerneon.backend.models.payload.request.UpdatePasswordRequest;
 import com.lerneon.backend.models.payload.request.UpdateProfileRequest;
+import com.lerneon.backend.repositories.InvitationRepository;
+import com.lerneon.backend.repositories.RoleRepository;
 import com.lerneon.backend.repositories.UserRepository;
 import com.lerneon.backend.services.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,6 +30,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
+    private final InvitationRepository invitationRepository;
 
     public Optional<User> findOptionalUserByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -63,5 +77,51 @@ public class UserServiceImpl implements UserService {
         user.setEmail(updateProfileRequest.getEmail());
 
         return saveUser(user);
+    }
+
+    @Override
+    public User assignUserCompany(Company company, User user, RoleEnum role) {
+        user.setCompany(company);
+
+        List<Role> roles = user.getRoles();
+        roles.add(roleRepository.findByName(role.name()).orElseThrow(
+                () -> new ResourceNotFoundException("Role was not found.")
+        ));
+
+        user.setRoles(roles);
+        return saveUser(user);
+    }
+
+    @Override
+    public Company getCurrentUserCompany() {
+        return getCurrentAuthenticatedUser().getCompany();
+    }
+
+    @Override
+    public User getCurrentAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(authentication.getPrincipal() instanceof User user)) {
+            throw new AuthException("Unauthorized");
+        }
+        return user;
+    }
+
+    @Override
+    public User setPassword(String token, SetPasswordRequest setPasswordRequest) {
+        Invitation invitation = invitationRepository.findByToken(token).orElseThrow(
+                () -> new ResourceNotFoundException("Invitation was not found.")
+        );
+        User user = findUserByEmail(invitation.getEmail());
+
+        if (!user.getProvider().equals(AccountProvider.INVITATION) || !user.getCanChangePassword()) {
+            throw new InvitationException("Cannot set password for this user.");
+        }
+
+        user.setPassword(passwordEncoder.encode(setPasswordRequest.getPassword()));
+        user.setIsVerified(true);
+        user.setCanChangePassword(false);
+
+        return userRepository.save(user);
     }
 }

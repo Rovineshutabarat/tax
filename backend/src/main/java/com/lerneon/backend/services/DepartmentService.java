@@ -2,11 +2,11 @@ package com.lerneon.backend.services;
 
 import com.lerneon.backend.models.entity.Department;
 import com.lerneon.backend.models.payload.request.DepartmentRequest;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface DepartmentService {
-    List<Department> findAllDepartments();
+    Page<Department> findAllDepartments(Pageable pageable);
 
     Department findDepartmentById(Integer id);
 

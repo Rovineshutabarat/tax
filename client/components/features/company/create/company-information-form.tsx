@@ -23,7 +23,6 @@ const CompanyInformationForm = () => {
     resolver: zodResolver(CompanyInfoRequest),
     defaultValues: {
       name: formData?.name,
-      taxId: formData?.taxId,
       email: formData?.email,
       phoneNumber: formData?.phoneNumber,
       establishedAt: formData?.establishedAt,
@@ -36,6 +35,11 @@ const CompanyInformationForm = () => {
     setFormData(data);
     saveStoredStep(2);
   };
+
+  function handleDiscard() {
+    discardChanges();
+    // reset();
+  }
 
   return (
     <React.Fragment>
@@ -66,28 +70,6 @@ const CompanyInformationForm = () => {
             />
             {errors.name && (
               <p className="text-destructive text-xs">*{errors.name.message}</p>
-            )}
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="space-y-1">
-            <Label>Company NPWP</Label>
-            <Label className="text-xs text-muted-foreground">
-              Provide your company’s tax identification number (NPWP) for tax
-              reporting purposes.
-            </Label>
-          </div>
-          <div className="space-y-1">
-            <Input
-              type="number"
-              placeholder="Enter your company NPWP"
-              {...register("taxId")}
-            />
-            {errors.taxId && (
-              <p className="text-destructive text-xs">
-                *{errors.taxId.message}
-              </p>
             )}
           </div>
         </div>
@@ -165,7 +147,7 @@ const CompanyInformationForm = () => {
             className="text-destructive cursor-pointer"
             variant="outline"
             type="button"
-            onClick={discardChanges}
+            onClick={handleDiscard}
           >
             <Trash2 />
             Discard Changes

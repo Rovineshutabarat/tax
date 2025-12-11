@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import React from "react";
+import React, { Fragment } from "react";
 import AppLayout from "@/components/layouts/app-layout";
+import ThemeProvider from "@/components/providers/theme-provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,12 +15,12 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning={true}>
-      <body className="dark">
-       <>
+    <html lang="en" suppressHydrationWarning>
+      <Fragment>
+       <ThemeProvider>
          <AppLayout>{children}</AppLayout>
-       </>
-      </body>
+       </ThemeProvider>
+      </Fragment>
     </html>
   );
 }

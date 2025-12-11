@@ -33,7 +33,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     @JsonIgnore
     private String password;
 
@@ -50,6 +50,11 @@ public class User extends BaseEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false))
     private List<Role> roles;
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "company_id", referencedColumnName = "id")
+    private Company company;
 
     @Override
     @JsonIgnore

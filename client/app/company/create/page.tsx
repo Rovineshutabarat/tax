@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 import CompanyInformationForm from "@/components/features/company/create/company-information-form";
-import CompanyLegalRegistrationForm from "@/components/features/company/create/company-legal-registration-form";
+import CompanyDetailForm from "@/components/features/company/create/company-detail-form";
 import CompanyAddressForm from "@/components/features/company/create/company-address-form";
 import CompanyTaxInformationForm from "@/components/features/company/create/company-tax-information-form";
 
 import { useCompanyFormStore } from "@/store/use-company-form-store";
 import AuthGuard from "@/components/shared/auth-guard";
+import { useAuth } from "@/hooks/use-auth";
+import { useRouter } from "next/navigation";
 
 const CreateCompanyPage = () => {
   const {
@@ -22,10 +24,19 @@ const CreateCompanyPage = () => {
     loadFormData,
   } = useCompanyFormStore();
 
+  const { session } = useAuth();
+  const router = useRouter();
+
   useEffect(() => {
+    if (session?.user?.company) {
+      router.replace("/company/department/list");
+      return;
+    }
+
     loadStoredStep();
     loadFormData();
-  }, [loadStoredStep, loadFormData]);
+  }, [session, router, loadStoredStep, loadFormData]);
+
 
   const steps = [
     {
@@ -36,9 +47,9 @@ const CreateCompanyPage = () => {
     },
     {
       id: 2,
-      name: "Legal & Registration Info",
+      name: "Company Details",
       icon: <ScrollText />,
-      content: <CompanyLegalRegistrationForm />,
+      content: <CompanyDetailForm />,
     },
     {
       id: 3,
