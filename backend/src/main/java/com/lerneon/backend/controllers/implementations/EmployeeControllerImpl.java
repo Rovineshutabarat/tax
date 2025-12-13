@@ -2,17 +2,18 @@ package com.lerneon.backend.controllers.implementations;
 
 import com.lerneon.backend.controllers.EmployeeController;
 import com.lerneon.backend.handlers.ResponseHandler;
-import com.lerneon.backend.models.entity.User;
+import com.lerneon.backend.models.entity.Employee;
+import com.lerneon.backend.models.payload.request.EmployeeRequest;
 import com.lerneon.backend.models.payload.response.common.PageResponse;
+import com.lerneon.backend.models.payload.response.common.SuccessResponse;
 import com.lerneon.backend.services.EmployeeService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -23,11 +24,21 @@ public class EmployeeControllerImpl implements EmployeeController {
 
     @GetMapping
     @Override
-    public ResponseEntity<PageResponse<User>> findAllEmployees(@PageableDefault Pageable pageable) {
+    public ResponseEntity<PageResponse<Employee>> findAllEmployees(@PageableDefault Pageable pageable) {
         return ResponseHandler.buildPaginationResponse(
                 HttpStatus.OK,
                 "",
                 employeeService.findAllEmployees(pageable)
+        );
+    }
+
+    @PostMapping
+    @Override
+    public ResponseEntity<SuccessResponse<Employee>> addEmployee(@RequestBody @Valid EmployeeRequest employeeRequest) {
+        return ResponseHandler.buildSuccessResponse(
+                HttpStatus.OK,
+                "",
+                employeeService.addEmployee(employeeRequest)
         );
     }
 }

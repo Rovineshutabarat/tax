@@ -36,8 +36,8 @@ const CompanySidebar = () => {
                 path: "/company/employee/list",
               },
               {
-                label: "Invite Employee",
-                path: "/company/employee/invite",
+                label: "Add Employee",
+                path: "/company/employee/add",
               },
             ],
           },

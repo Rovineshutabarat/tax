@@ -51,6 +51,7 @@ const RegisterPage = () => {
                   id="username"
                   type="text"
                   placeholder="Enter Your Username"
+                  autoComplete="username"
                   {...register("username")}
                 />
                 {errors.username && (
@@ -65,6 +66,7 @@ const RegisterPage = () => {
                   id="email"
                   type="email"
                   placeholder="Enter Your Email"
+                  autoComplete="email"
                   {...register("email")}
                 />
                 {errors.email && (
@@ -82,6 +84,7 @@ const RegisterPage = () => {
                     id="password"
                     type={isShowPassword ? "text" : "password"}
                     placeholder="Enter Your Password"
+                    autoComplete="current-password"
                     {...register("password")}
                   />
                   <Button

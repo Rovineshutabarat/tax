@@ -1,18 +1,21 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
-import { User } from "@/types/entity/user";
 import { EmployeeActionCell } from "@/components/features/company/employee/employee-action-cell";
 import { Role } from "@/types/entity/role";
+import { Employee } from "@/types/entity/employee";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { EmployeeStatus } from "@/types/enums/employee.status";
 
-export const EmployeeColumns: ColumnDef<User>[] = [
+export const EmployeeColumns: ColumnDef<Employee>[] = [
   {
     accessorKey: "id",
     header: () => <div className="text-center">ID</div>,
     cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
   },
   {
-    accessorKey: "username",
+    accessorKey: "name",
     enableSorting: true,
     header: ({ column }) => (
       <Button
@@ -20,7 +23,7 @@ export const EmployeeColumns: ColumnDef<User>[] = [
         className="text-center cursor-pointer"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Username
+        Full Name
         {column.getIsSorted() === "asc" ? (
           <ArrowUp />
         ) : column.getIsSorted() === "desc" ? (
@@ -31,7 +34,7 @@ export const EmployeeColumns: ColumnDef<User>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="text-center">{row.getValue("username")}</div>
+      <div className="text-center">{row.getValue("name")}</div>
     ),
   },
   {
@@ -55,6 +58,63 @@ export const EmployeeColumns: ColumnDef<User>[] = [
     ),
     cell: ({ row }) => (
       <div className="text-center">{row.getValue("email")}</div>
+    ),
+  },
+  {
+    accessorKey: "phoneNumber",
+    header: () => (
+      <Button variant="ghost" className="text-center cursor-pointer">
+        Phone Number
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue("phoneNumber")}</div>
+    ),
+  },
+  {
+    accessorKey: "baseSalary",
+    enableSorting: true,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-center cursor-pointer"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Base Salary
+        {column.getIsSorted() === "asc" ? (
+          <ArrowUp />
+        ) : column.getIsSorted() === "desc" ? (
+          <ArrowDown />
+        ) : (
+          <ArrowUpDown />
+        )}
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue("baseSalary")}</div>
+    ),
+  },
+  {
+    accessorKey: "department",
+    enableSorting: true,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-center cursor-pointer"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Department
+        {column.getIsSorted() === "asc" ? (
+          <ArrowUp />
+        ) : column.getIsSorted() === "desc" ? (
+          <ArrowDown />
+        ) : (
+          <ArrowUpDown />
+        )}
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="text-center">{row.original.department.name}</div>
     ),
   },
   {
@@ -98,6 +158,36 @@ export const EmployeeColumns: ColumnDef<User>[] = [
         </div>
       );
     },
+  },
+  {
+    accessorKey: "employeeStatus",
+    enableSorting: true,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-center cursor-pointer"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Employee Status
+        {column.getIsSorted() === "asc" ? (
+          <ArrowUp />
+        ) : column.getIsSorted() === "desc" ? (
+          <ArrowDown />
+        ) : (
+          <ArrowUpDown />
+        )}
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <Badge
+        className={cn(
+          row.original.employeeStatus === EmployeeStatus.Values.RESIGNED ?
+            "bg-destructive text-white" : "bg-blue-500 text-white",
+        )}
+      >
+        {row.original.employeeStatus}
+      </Badge>
+    ),
   },
   {
     id: "actions",
