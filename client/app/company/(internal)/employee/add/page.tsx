@@ -292,7 +292,6 @@ const AddEmployeePage = () => {
                     <SelectGroup>
                       <SelectItem value="SINGLE">Single</SelectItem>
                       <SelectItem value="MARRIED">Married</SelectItem>
-                      <SelectItem value="DIVORCED">Divorced</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -310,11 +309,24 @@ const AddEmployeePage = () => {
                   </Label>
                 </div>
                 <div className="space-y-1">
-                  <Input
-                    type="number"
-                    placeholder="Enter number of dependents"
-                    {...register("numberOfDependents", { valueAsNumber: true })}
-                  />
+                  <Select
+                    value={String(watch("numberOfDependents"))}
+                    onValueChange={(value) =>
+                      setValue("numberOfDependents", Number(value))
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select number of dependents" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="0">0</SelectItem>
+                        <SelectItem value="1">1</SelectItem>
+                        <SelectItem value="2">2</SelectItem>
+                        <SelectItem value="3">3</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                   {errors.numberOfDependents && (
                     <p className="text-destructive text-xs">
                       *{errors.numberOfDependents.message}

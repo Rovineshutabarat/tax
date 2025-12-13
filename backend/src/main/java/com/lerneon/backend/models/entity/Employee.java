@@ -37,6 +37,10 @@ public class Employee extends BaseEntity {
     @Column(nullable = false, unique = true, length = 20)
     private String taxId;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "tax_category_id" , referencedColumnName = "id")
+    private TaxCategory taxCategory;
+
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal baseSalary;
 

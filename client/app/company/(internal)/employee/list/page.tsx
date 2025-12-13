@@ -39,6 +39,8 @@ const Page = () => {
     getSortedRowModel: getSortedRowModel(),
   });
 
+  console.log(employees?.data);
+
   return (
     <div className="rounded-md border-0">
       <DataTableProvider isLoading={isLoading} table={table}>

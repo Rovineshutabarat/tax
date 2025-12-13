@@ -1,9 +1,6 @@
 package com.lerneon.backend.services.implementations;
 
-import com.lerneon.backend.models.entity.Company;
-import com.lerneon.backend.models.entity.Department;
-import com.lerneon.backend.models.entity.Employee;
-import com.lerneon.backend.models.entity.Role;
+import com.lerneon.backend.models.entity.*;
 import com.lerneon.backend.models.enums.EmployeeStatus;
 import com.lerneon.backend.models.enums.Gender;
 import com.lerneon.backend.models.enums.MarriageStatus;
@@ -11,6 +8,7 @@ import com.lerneon.backend.models.exceptions.ResourceNotFoundException;
 import com.lerneon.backend.models.payload.request.EmployeeRequest;
 import com.lerneon.backend.repositories.EmployeeRepository;
 import com.lerneon.backend.repositories.RoleRepository;
+import com.lerneon.backend.repositories.TaxCategoryRepository;
 import com.lerneon.backend.services.DepartmentService;
 import com.lerneon.backend.services.EmployeeService;
 import com.lerneon.backend.services.UserService;
@@ -29,6 +27,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final RoleRepository roleRepository;
     private final DepartmentService departmentService;
+    private final TaxCategoryRepository taxCategoryRepository;
 
     @PreAuthorize("hasAuthority('EMPLOYEE_VIEW')")
     @Override
@@ -46,11 +45,17 @@ public class EmployeeServiceImpl implements EmployeeService {
                 () -> new ResourceNotFoundException("Role was not found")
         )).toList();
 
+        TaxCategory taxCategory = taxCategoryRepository.findByMarriageStatusAndNumberOfDependents(MarriageStatus.valueOf(employeeRequest.getMarriageStatus()), employeeRequest.getNumberOfDependents())
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Tax category was not found")
+                );
+
         return employeeRepository.save(Employee.builder()
                 .name(employeeRequest.getName())
                 .email(employeeRequest.getEmail())
                 .phoneNumber(employeeRequest.getPhoneNumber())
                 .taxId(employeeRequest.getTaxId())
+                .taxCategory(taxCategory)
                 .baseSalary(employeeRequest.getBaseSalary())
                 .marriageStatus(MarriageStatus.valueOf(employeeRequest.getMarriageStatus()))
                 .numberOfDependents(employeeRequest.getNumberOfDependents())
