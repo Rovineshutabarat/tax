@@ -56,6 +56,10 @@ public class User extends BaseEntity implements UserDetails {
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "employee_profile_id" , referencedColumnName = "id")
+    private Employee employeeProfile;
+
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {

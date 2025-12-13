@@ -19,27 +19,26 @@ import {
 
 type Option = {
   label: string;
-  value: string | number;
+  value: number;
 };
 
 type ComboboxProps = {
   placeholder?: string;
   contents: Option[];
-  value: (string | number)[];
-  onValueChange: (value: (string | number)[]) => void;
+  value: number[];
+  onValueChange: (value: number[]) => void;
 };
 
 export function Combobox({
   placeholder = "Select...",
   contents,
-  value = [],
+  value,
   onValueChange,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
 
-  const toggleValue = (val: string | number) => {
-    const exists = value.includes(val);
-    if (exists) {
+  const toggleValue = (val: number) => {
+    if (value.includes(val)) {
       onValueChange(value.filter((v) => v !== val));
     } else {
       onValueChange([...value, val]);
@@ -55,9 +54,10 @@ export function Combobox({
           className="w-full justify-between"
         >
           {value.length > 0 ? `${value.length} selected` : placeholder}
-          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
+
       <PopoverContent
         align="start"
         side="bottom"
@@ -67,9 +67,11 @@ export function Combobox({
         <Command>
           <CommandInput placeholder="Search..." />
           <CommandEmpty>No data found.</CommandEmpty>
+
           <CommandGroup>
             {contents.map((item) => {
               const isSelected = value.includes(item.value);
+
               return (
                 <CommandItem
                   key={item.value}

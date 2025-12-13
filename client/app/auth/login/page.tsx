@@ -68,6 +68,7 @@ const LoginPage = () => {
                   id="email"
                   type="email"
                   placeholder="Enter Your Email"
+                  autoComplete="email"
                   {...register("email")}
                 />
                 {errors.email && (
@@ -91,6 +92,7 @@ const LoginPage = () => {
                     id="password"
                     type={isShowPassword ? "text" : "password"}
                     placeholder="Enter Your Password"
+                    autoComplete="current-password"
                     {...register("password")}
                   />
                   <Button

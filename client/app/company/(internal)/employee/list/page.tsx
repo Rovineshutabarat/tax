@@ -24,7 +24,9 @@ const Page = () => {
     queryFn: () => EmployeeService.findAllEmployees(),
   });
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>({
+      phoneNumber: false,
+    });
 
   const table = useReactTable({
     data: employees?.data ?? [],
@@ -43,7 +45,7 @@ const Page = () => {
         <DataTableToolbar
           title="Employees"
           description="Manage employee data, roles, and organizational assignments"
-          createUrl="/company/employee/invite"
+          createUrl="/company/employee/add"
         />
         <DataTableContent columns={EmployeeColumns} />
         <DataTableFooter pagination={employees?.pagination} />

@@ -13,9 +13,10 @@ import { Edit, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import React, { Fragment } from "react";
 import { User } from "@/types/entity/user";
+import {Employee} from "@/types/entity/employee";
 
 type EmployeeActionCellProps = {
-  employee: User;
+  employee: Employee;
 };
 
 export const EmployeeActionCell = ({ employee }: EmployeeActionCellProps) => {

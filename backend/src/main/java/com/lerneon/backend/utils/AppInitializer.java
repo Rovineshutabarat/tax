@@ -2,13 +2,11 @@ package com.lerneon.backend.utils;
 
 import com.lerneon.backend.models.entity.*;
 import com.lerneon.backend.models.enums.AccountProvider;
+import com.lerneon.backend.models.enums.CompanyType;
 import com.lerneon.backend.models.enums.PermissionEnum;
 import com.lerneon.backend.models.enums.RoleEnum;
 import com.lerneon.backend.models.exceptions.ResourceNotFoundException;
-import com.lerneon.backend.repositories.BusinessSectorRepository;
-import com.lerneon.backend.repositories.PermissionRepository;
-import com.lerneon.backend.repositories.RoleRepository;
-import com.lerneon.backend.repositories.UserRepository;
+import com.lerneon.backend.repositories.*;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,14 +24,18 @@ public class AppInitializer implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final BusinessSectorRepository businessSectorRepository;
     private final PermissionRepository permissionRepository;
+    private final CompanyRepository companyRepository;
+    private final DepartmentRepository departmentRepository;
 
     @Override
     public void run(String... args) {
         initializeRoles();
         initializePermissions();
         assignRolePermissions();
-        initializeUsers();
         initializeBusinessSectors();
+        initializeCompany();
+        initializeDepartments();
+        initializeUsers();
     }
 
     void initializePermissions() {
@@ -110,6 +112,11 @@ public class AppInitializer implements CommandLineRunner {
         roles.add(roleRepository.findByName(RoleEnum.ROLE_MANAGER.name()).orElseThrow(
                 () -> new ResourceNotFoundException("Role was not found.")
         ));
+
+        Company company = companyRepository.findById(1).orElseThrow(
+                () -> new ResourceNotFoundException("Company was not found.")
+        );
+
         userRepository.save(User.builder()
                 .email("rovineshutabarat23@gmail.com")
                 .username("rovines")
@@ -118,6 +125,7 @@ public class AppInitializer implements CommandLineRunner {
                 .roles(roles)
                 .provider(AccountProvider.LOCAL)
                 .canChangePassword(false)
+                .company(company)
                 .build());
     }
 
@@ -146,5 +154,70 @@ public class AppInitializer implements CommandLineRunner {
         );
 
         businessSectorRepository.saveAll(businessSectors);
+    }
+
+    void initializeCompany() {
+        BusinessSector businessSector = businessSectorRepository.findById(1).orElseThrow(
+                () -> new ResourceNotFoundException("Business sector was not found.")
+        );
+
+        Company company = Company.builder()
+                .name("aksdbjsad")
+                .email("comany@gmail.com")
+                .phoneNumber("085158838022")
+                .establishedAt(LocalDate.now())
+                .businessSector(businessSector)
+                .companyType(CompanyType.PT)
+                .address(Address.builder()
+                        .street("asdasd")
+                        .city("asdsadsa")
+                        .province("saasdads")
+                        .country("adfsadsda")
+                        .postalCode("21322")
+                        .build())
+                .companyPayrollSetting(CompanyPayrollSetting.builder()
+                        .taxId("123456789012345")
+                        .isVatRegistered(true)
+                        .businessActivityCode("12345")
+                        .build())
+                .build();
+
+        companyRepository.save(company);
+    }
+
+    void initializeDepartments() {
+        Company company = companyRepository.findById(1).orElseThrow(
+                () -> new ResourceNotFoundException("Company was not found.")
+        );
+
+        List<Department> departments = List.of(
+                Department.builder()
+                        .name("Human Resources")
+                        .description("Handles recruitment, employee relations, and HR policies.")
+                        .company(company)
+                        .build(),
+                Department.builder()
+                        .name("Finance")
+                        .description("Manages financial planning, payroll, and accounting.")
+                        .company(company)
+                        .build(),
+                Department.builder()
+                        .name("Engineering")
+                        .description("Responsible for product development and system architecture.")
+                        .company(company)
+                        .build(),
+                Department.builder()
+                        .name("Operations")
+                        .description("Oversees daily operations and process optimization.")
+                        .company(company)
+                        .build(),
+                Department.builder()
+                        .name("Marketing")
+                        .description("Handles branding, campaigns, and market analysis.")
+                        .company(company)
+                        .build()
+        );
+
+        departmentRepository.saveAll(departments);
     }
 }

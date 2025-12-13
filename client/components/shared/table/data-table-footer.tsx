@@ -25,14 +25,14 @@ export function DataTableFooter({ pagination }: DataTableFooterProps) {
       <div className="flex items-center gap-x-3">
         <p className="text-sm text-muted-foreground">Rows per page</p>
         <Select
-          value={pagination?.size.toString()}
+          value={String(pagination?.size ?? 10)}
           onValueChange={(value) =>
             setParams({
               size: Number(value),
             })
           }
         >
-          <SelectTrigger className="w-[4.4rem] h-9">
+        <SelectTrigger className="w-[4.4rem] h-9">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
